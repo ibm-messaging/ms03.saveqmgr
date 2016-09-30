@@ -1,0 +1,53 @@
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+# Module Name: makefile.windows                                                   
+# DESCRIPTIVE NAME WebSphere MQ Save Queue Manager Object                  
+#                  Definitions using PCFs (ms03 supportpac)                 
+#                                                                           
+
+
+# This Makefile makes the saveqmgr executables on windows (ms03)
+#
+# Set the suffix for the target files
+EXESUF = exe
+
+# CC defines the compiler.
+# ibm compiler: CC = icc
+CC = cl
+
+# LC defines the linker
+# ibm linker: LC = icc
+LC = link
+
+# The MQ install directory
+#MQHLD="c:\Program Files\IBM\WebSphere MQ"
+#MQHLD=c:\mqm
+MQHLD=c:\IBMPROG\WebSphereMQ
+
+# MQM library directory
+MQMLIB = $(MQHLD)\tools\Lib64
+
+# set LIBS to list all the libraries ms03 should link with.
+LIBS = mqm.Lib
+LIBC = mqic.lib
+
+# set INCS to list all the header the compiler needs
+INCS = -I. -I$(MQHLD)\tools\c\include
+
+# Set CCOPTS - the compiler options.
+CCOPTS = /c /Fo$*.$(OBJSUF) 
+CCOPTC = /c -DUSEMQCNX /Fo$@
+
+# Set LCOPTS - the linker options
+# IBM linker options: LCOPTS = /Fe $@
+LCOPTS = /out:$@ /LIBPATH:$(MQMLIB) $(LIBS)
+LCOPTC = /out:$@ /LIBPATH:$(MQMLIB) $(LIBC)
+
+# Set the suffix for the object files
+OBJSUF = obj
+
+RM = del
+
+# Include the file which does the real work! 
+include makefile.common

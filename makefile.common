@@ -1,0 +1,56 @@
+# This makefile is included by makefile.<opsys> and should not be called directly
+
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+# Module Name: makefile.common                                                   
+# DESCRIPTIVE NAME WebSphere MQ Save Queue Manager Object                  
+#                  Definitions using PCFs (ms03 supportpac)                 
+#                                                                           
+
+# set TARGET to the name of the executable to create
+TARGET = saveqmgr.$(EXESUF)
+TARGETC = saveqmgrc.$(EXESUF)
+
+all: $(TARGET) $(TARGETC)
+
+clean: 
+	$(RM) *.o *.obj
+
+# The list of objects needed to make each executable
+BASEOBJS = args.$(OBJSUF) namelist.$(OBJSUF) channel.$(OBJSUF) mqutils.$(OBJSUF) process.$(OBJSUF) qmgr.$(OBJSUF) queue.$(OBJSUF) authinfo.$(OBJSUF) listener.$(OBJSUF) services.$(OBJSUF) stgclass.$(OBJSUF) system.$(OBJSUF) usage.$(OBJSUF) log.$(OBJSUF) cfstruct.$(OBJSUF) archive.$(OBJSUF) oam.$(OBJSUF) topic.$(OBJSUF) subscript.$(OBJSUF)
+OBJS = saveqmgr.$(OBJSUF) $(BASEOBJS) 
+OBJC = saveqmgrc.$(OBJSUF) $(BASEOBJS) 
+
+$(TARGET) : $(OBJS)
+	$(LC) $(LCOPTS) $(OBJS) 
+
+$(TARGETC) : $(OBJC)
+	$(LC) $(LCOPTC) $(OBJC) 
+
+saveqmgrc.$(OBJSUF) : saveqmgr.c saveqmgr.h
+	$(CC) $(CCOPTC)  $(INCS) saveqmgr.c
+saveqmgr.$(OBJSUF) : saveqmgr.c saveqmgr.h
+channel.$(OBJSUF) : channel.c saveqmgr.h
+mqutils.$(OBJSUF) : mqutils.c saveqmgr.h
+process.$(OBJSUF) : process.c saveqmgr.h
+namelist.$(OBJSUF) : namelist.c saveqmgr.h
+qmgr.$(OBJSUF) : qmgr.c saveqmgr.h
+queue.$(OBJSUF) : queue.c saveqmgr.h
+authinfo.$(OBJSUF) : authinfo.c saveqmgr.h
+listener.$(OBJSUF) : listener.c saveqmgr.h
+services.$(OBJSUF) : services.c saveqmgr.h
+stgclass.$(OBJSUF) : stgclass.c saveqmgr.h
+system.$(OBJSUF) : system.c saveqmgr.h
+usage.$(OBJSUF) : usage.c saveqmgr.h
+log.$(OBJSUF) : log.c saveqmgr.h
+cfstruct.$(OBJSUF) : cfstruct.c saveqmgr.h
+archive.$(OBJSUF) : archive.c saveqmgr.h
+oam.$(OBJSUF) : oam.c saveqmgr.h
+topic.$(OBJSUF) : topic.c saveqmgr.h
+subscript.$(OBJSUF) : subscript.c saveqmgr.h
+
+
+#the object files depend on the corresponding source files
+.c.$(OBJSUF):
+	$(CC) $(CCOPTS) $(INCS) $<

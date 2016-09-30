@@ -1,0 +1,45 @@
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+# Module Name: makefile.solaris                                  
+# DESCRIPTIVE NAME WebSphere MQ Save Queue Manager Object                  
+#                  Definitions using PCFs (ms03 supportpac)                 
+#                                                                           
+
+
+# This Makefile makes the saveqmgr executables on solaris (ms03)
+#
+# Set the suffix for the target files
+EXESUF = solaris
+
+# CC defines the compiler.
+CC = cc
+
+# LC defines the linker
+LC = $(CC)
+
+# MQM library directory
+MQMLIB = /opt/mqm/lib64
+
+# set LIBS to list all the libraries ms03 should link with.
+LIBS = -lmqm -lmqmcs -lmqmzse -lc -lm -lsocket
+LIBC = -lmqic -lmqmcs -lmqmzse -lc -lm -lsocket
+
+# set INCS to list all the header the compiler needs
+INCS = -I. -I/opt/mqm/inc
+
+# Set CCOPTS - the compiler options.
+CCOPTS = -c -DUNIX -o $*.$(OBJSUF)
+CCOPTC = -c -DUNIX -DUSEMQCNX -o $@
+
+# Set LCOPTS - the linker options
+LCOPTS = -o $@ -L$(MQMLIB) -L. $(LIBS)
+LCOPTC = -o $@ -L$(MQMLIB) -L. $(LIBC)
+
+
+# Set the suffix for the object files
+OBJSUF = o
+
+# Include the file which does the real work! 
+include makefile.common
+

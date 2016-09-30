@@ -1,0 +1,59 @@
+# This Makefile makes the saveqmgr executable on HPNSS-OSS (ms03)
+
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+
+#
+
+all: saveqmgr saveqmgr.g
+
+# CC defines the compiler. Set to "c89" for ANSI compliant C compiler.
+CC = c89
+
+# Set CCOPTS - the compiler options.
+
+CCFLAGS= \
+-Wcall_shared \
+-DUNIX \
+-Whighpin=on \
+-Whighrequesters=on \
+-Wrunnamed \
+-Winspect \
+-Wsaveabend \
+-Wextensions \
+-Wnowarn=262,1506,770 \
+-Wallow_cplusplus_comments\
+-I. 
+
+SRCS =      \
+saveqmgr.c  \
+channel.c   \
+mqutils.c   \
+process.c   \
+namelist.c  \
+qmgr.c      \
+queue.c     \
+authinfo.c  \
+archive.c   \
+args.c      \
+cfstruct.c  \
+listener.c  \
+log.c       \
+oam.c       \
+services.c  \
+stgclass.c  \
+subscript.c \
+topic.c     \
+usage.c
+
+
+saveqmgr : $(SRCS)
+	$(CC) -Wsystype=oss $(CCFLAGS) -I$(MQNSKOPTPATH)/inc -o $@ $(SRCS) -L$(MQNSKOPTPATH)/lib -lmqm 
+
+saveqmgr.g: $(SRCS)
+	$(CC) -Wsystype=guardian $(CCFLAGS) -I$(MQNSKOPTPATH)/inc -o $@ $(SRCS) -L$(MQNSKOPTPATH)/lib/G -lmqm 
+
+
+clean:
+	rm -f saveqmgr saveqmgr.g *.o

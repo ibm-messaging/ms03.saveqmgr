@@ -1,0 +1,162 @@
+MS03 SupportPac
+- - - - - - - -
+Statement:       Licensed Materials - Property of IBM
+                 SupportPac MS03
+
+                (c) Copyright IBM Corp. 1995, 1998, 1999, 2000
+                (c) Copyright IBM Corp. 2001, 2002, 2003, 2004
+                (c) Copyright IBM Corp. 2005, 2006, 2007, 2008
+                (c) Copyright IBM Corp. 2009, 2010
+
+See the read.me file for support information and change history.
+
+Once you have unzipped the ms03_iseries.zip file, you will notice a
+file called MS03.  That is the only file AS/400 users need to work with.
+Print these instructions and proceed from here.
+
+
+To Save a QMGR, follow these instructions:
+- - - - - - - - - - - - - - - - - - - - -
+
+On the Source AS/400, issue:
+CRTSAVF FILE(QGPL/MS03)
+
+
+On the Windows machine, FTP the MS03 to your AS/400 machine:
+C:\SupportPac_Directory>  <change directory where the MS03 file exist>
+ftp <AS/400 name>
+  user:
+  password:
+then when logged on...
+ftp> cd QGPL
+ftp> bin
+ftp> put MS03
+
+
+Back on the AS/400, issue:
+CRTSAVF (QGPL/MS03)
+RSTLIB SAVLIB(MS03) DEV(*SAVF) SAVF(QGPL/MS03)
+STRMQMCSVR MQMNAME(<QMGRNAME>)
+MS03/QSAVEQMGR LCLQMGRNAM(<QMGRNAME>) FILENAME('MS03/QMQSC(<QMGRNAME>)')
+
+By default, this command will either create the file 'MS03/QMQSC(<QMGRNAME>)',
+or append the output to file 'MS03/QMQSC(<QMGRNAME>)' if it already exists,
+and will include objects whose names commence with 'SYSTEM.'
+Prompting the MS03/QSAVEQMGR command with PF4, will reveal additional optional
+parameters for VERSION, RMTQMGRNAM, RDEFSYS and OUTPUT.
+
+VERSION : determines which version of MQSC to generate
+      and can be '520','530', '600'or '700'
+    Note: '520', '530', '600', '700' are only available if the program has been
+      compiled with the correct level of the queue manager.
+
+LCLQMGRNAM: is the name of the local qmgr 
+	(the one we MQCONN to)
+
+RMTQMGRNAM: is the name of a remote qmgr 
+	(this should match an XMITQ name on the local qmgr)
+
+FILENAME: the name of the file to write the MQSC ouput into.
+	defaults to '*CURLIB/QMQSC(SAVEQMGR)'
+
+RDEFSYS: controls creation of objects that begin with "SYSTEM*".
+     *YES means objects whose name starts with SYSTEM are created.
+
+OUTPUT:  specifies to replace (overwrite) the output file
+    	*REPLACE replaces (overwrites) the output file
+	*APPEND appends to an output file if it already exists.
+
+MAKEAUTH: Whether or not to make GRTMQMAUT commands into a CL source file.
+
+AUTHFN:  The name of the file to create GRTMQMAUT commands.
+	defaults to '*CURLIB/QMAUT(SAVEQMGR)'
+
+PERMDYN:  Whether or not to make "define qlocal" commands for PERMDYN queues.
+
+IGNDAMAGED: Normally, a report from the command server of a "damanged object"
+	causes saveqmgr to stop.  Setting this to *YES causes it to continue.
+
+
+To Restore the saved QMGR using the MS03 SupportPac, follow these instructions:
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+The first step is to properly quiesce and delete the QMGR you are about to restore,
+if it still exists.  Then, follow the four steps below to restore the Queue Manager
+from source file MS03/QMQSC(<QMGRNAME>) previously created by the QSAVEQMGR program...
+
+STRSBS SBSD(QMQM)
+CRTMQM MQMNAME(<QMGRNAME>)
+STRMQM MQMNAME(<QMGRNAME>)
+STRMQMMQSC SRCMBR(<QMGRNAME>) SRCFILE(MS03/QMQSC) MQMNAME(<QMGRNAME>)
+
+
+If you have saved the object authorities (MAKEAUTH(*YES)), then you can restore
+those permissions:
+
+CRTCLPGM PGM(MS03/QMAUT) SRCFILE(MS03/QMAUT) SRCMBR(SAVEQMGR) REPLACE(*YES)
+CALL MS03/QMAUT
+
+
+You should now have a restored copy of Queue Manager <QMGRNAME>.
+
+
+
+
+
+*OPTIONAL INSTRUCTIONS
+- - - - - - - - - - -
+
+
+To Restore a saved QMGR using the MS03 SupportPac to a Target AS/400 with WebSphere MQ,
+follow these instructions (OPTIONAL):
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+To restore the QMGR to another system, save the source file 'MS03/QMQSC(<QMGRNAME>)'
+into a savefile, and FTP in binary mode into a savefile on the target AS/400 system.
+The following are instructions for each side:
+
+On Target AS/400 System:
+CRTSAVF FILE(QGPL/<QMGRNAME>)
+
+
+On Source AS/400 System:
+CRTSAVF FILE(QGPL/<QMGRNAME>)
+SAVOBJ OBJ(QMQSC) LIB(MS03) DEV(*SAVF) SAVF(QGPL/<QMGRNAME>)
+FTP <Target AS/400 name>
+  user:
+  password:
+then when logged on...
+ftp> cd QGPL
+ftp> lcd QGPL
+ftp> bin
+ftp> put <QMGRNAME>.savf
+
+
+Back on the Target AS/400 System:
+CRTLIB LIB(<QMGRNAME>)
+RSTOBJ OBJ(*ALL) SAVLIB(MS03) DEV(*SAVF) SAVF(QGPL/<QMGRNAME>) RSTLIB(<QMGRNAME>)
+STRSBS SBSD(QMQM)
+CRTMQM MQMNAME(<QMGRNAME>)
+STRMQM MQMNAME(<QMGRNAME>)
+STRMQMMQSC SRCMBR(<QMGRNAME>) SRCFILE(<QMGRNAME>/QMQSC) MQMNAME(<QMGRNAME>)
+
+
+
+You should now have a restored copy of the Source QMGR on your Target AS/400.
+
+
+
+Recompile Instructions (OPTIONAL):
+- - - - - - - - - - - -
+
+
+For the AS400 platform, the required programs are already compiled in the original MS03 SAVF file.
+However, in the event you need/want to recreate the programs for the MS03 SupportPac
+you can follow the instructions below.
+
+On the AS/400, issue (example syntax allows for debug and assumes the source files have
+already been restored to the MS03 Library and you have a license for the
+'C' compiler):
+
+CRTCLPGM PGM(MS03/BUILDMS03) SRCFILE(MS03/QCLSRC) SRCMBR(BUILDMS03) REPLACE(*YES)
+CALL MS03/BUILDMS03
+

@@ -1,0 +1,148 @@
+ --------------------------------------------------------------------
+| MS03 History file.                                                 |
+|                                                                    |
+|  8 July 1997      Changed MQParmCpy to recognise all printable     |
+|                   characters                                       |
+|  8 Feb  1998      Generates Version 5 attributes.                  |
+|  V3.0             Skips dynamically defined queues.                |
+|                   Fix bug - not generating Msg Retry attributes    |
+|                   Fix several other small bugs.                    |
+|  1 Mar 1998       Modify to allow compilation with MQ V2 headers   |
+|  V3.1             Allow for "long" strings in keywords.            |
+|                   Allow for single quotes in strings.              |
+|                   Include AIX and Solaris makefiles                |
+|  10 Aug 1998      (1) Generates definitions for client channels    |
+|  V3.2                 (clntconn)                                   |
+|                   (2) Optionally allows unique output filename     |
+|                   (3) Supports MQSeries for Windows V2.1           |
+|                   (4) Supports MQSeries for OS/400.                |
+|                                                                    |
+|  26 Apr 1999  a. Added support for MQSeries V5.1                   |
+|  v5.1         b. -s  option to supress creation of "SYSTEM" objects|
+|               c. Modified so that output file is only opened once  |
+|               d. -c flag directs output to STDOUT                  |
+|               e. Further OS/400 enhancements                       |
+|               f. Major restructuring for maintainability           |
+|               Arjan M Van Vught assisted with OS400 support        |
+|               Brian Shelden assisted with file open support        |
+|                                                                    |
+|  15 Dec 1999                                                       |
+|  v5.1.1       a. Added support for DEC-VAX                         |
+|               b. added MQGMO_CONVERT to MQGET options.             |
+|                  (can be suppressed with -n flag)                  |
+|               c. added -q flag to suppress PCF attribute warnings  |
+|               Oscar van Eijk assisted with DEC-VAX support         |
+|                                                                    |
+|               Note: The OS/2 executable is no longer shipped       |
+|                     with this zip.  It should work on that platform|
+|                     but since I no longer have access to an        |
+|                     OS/2 machine, I am no longer including the     |
+|                     executable.                                    |
+|                                                                    |
+| 21 Jun 2000                                                        |
+| v5.1.2        a. fixed "multiple send/recv exit" problem           |
+|               b. fixed "long lines" problem                        |
+|               c. added a flag to cause "RESET CHANNEL" commands    |
+|                  to be created in the output script.               |
+|               d. Included a makefile for Compaq Tru64unix          |
+|                                                                    |
+| 4 Jan 2001                                                         |
+| v5.2.0        a. Added support for MQSeries v5.2                   |
+|               b. The SupportPac has been packaged into a Windows   |
+|                  "zip" file and a unix compress Tar file           |
+|               c. added flag to supress file creation date          |
+|                  message                                           |
+|               d. for some reason (?) only local queues and         |
+|                  model queues return creation date/time            |
+|                  so, we behave accordingly....                     |
+|               e. If we get "no objects found" pcf return code,     |
+|                  put a nice message to stderr if not in quiet      |
+|                  mode.                                             |
+|               f. Long MCAUser fields were being truncated.         |
+|               g. Use "OpenVMS" as appltype in process defs         |
+|               h. qmgr attributes was missing "maxmsgl" option.     |
+|               i. Support for Tandem NSK channel attribute          |
+|                                                                    |
+| 20 Jan 2002                                                        |
+| v5.2.1        a. AS400 added for fix of APAR SA93663.              |
+|               b. Added manual build instructions for AS/400.       |
+|                                                                    |
+| 15 Jul 2002                                                        |
+| v5.3.0        a. Maxmsgl only applies to V5 queue managers         |
+|               b. Fixed problem with chained channel exits.         |
+|               c. Added "-p" flag to save permdyn queues as         |
+|                  ordinary local queues                             |
+|               d. More improvements for creating as/400 version.    |
+|               e. Support for Websphere MQ 5.3 enhancements         |
+|                  (Mostly SSL related items).                       |
+|               f. Added "-i" flag to ignore "damaged object"        |
+|                  messages.  This allows backup to continue even    |
+|                  if the qmgr has damaged objects.                  |
+|                                                                    |
+|                                                                    |
+| 07 Jan 2003                                                        |
+| v5.3.1        a. Fixed SSLKEYR length error in qmgr.c              |
+|               b. Fixed problem reported where we get               |
+|                  2085 if NO process objects are defined.           |
+|               c. Made small adjustment to qsaveqmgr.cmd            |
+|                  to allow for versions > 5.0                       |
+|               d. Added support for KAINT now appearing on          |
+|                  channels after application of CSD01.              |
+| 05 Aug 2003                                                        |
+| v5.3.1.a      a. Minor "readme" doc fix                            |
+|               b. Allow for missing reply msgs when pcf error       |
+|                  msgs are received and -i is specified             |
+|               c. Changed name to WebSphere MQ                      |
+|               d. If we can, we print the name of the object        |
+|                  associated with the PCF error                     |
+|               e. set RetCode to WARNING if a damaged object is     |
+|                  found and -i was specified.                       |
+|               f. changed the message "xxx definitions written..."  |
+|                  to "Writing xxx definitions ..." to reflect       |
+|                  exactly when the message is being produced.       |
+|               g. Check version number on command line              |
+|               h. Also delivering a Win-Client version (saveqmgrc)  |
+|               i. Improved iSeries (AS/400) support.  See           |
+|                  AS400READ.ME file for details.                    |
+|                                                                    |
+| 27 Jan 2004                                                        |
+|  v5.3.2                                                            |
+|               a. Added -a and -x flags for specify parameters      |
+|                  to mqconnx for client connections                 |
+|               b. shipped client and server version of windows, aix,|
+|                  solaris, linux executables                        |
+|               c. cleaned up some code and makefiles to avoid       |
+|                  compile time warnings. Restructured makefiles.    |
+|                                                                    |
+|  5 Feb 2004                                                        |
+|  v5.3.3                                                            |
+|               a. Added npmclass (csd6) for local class q's         |
+|               a. seperated iSeries materials into ms03i.zip        |
+|                                                                    |
+|                                                                    |
+|  22 Mar 2004                                                       |
+|  v5.3.3.a                                                          |
+|               a. Fixed case where CSD6 is not applied to mq.       |
+|                  (ie, we only want to generate an NPMCLASS         |
+|                   attribute if csd6 has been applied.  So now      |
+|                   we test to see if we ever got a NPMCLASS         |
+|                   attribute from the cmdsvr.)                      |
+|                                                                    |
+|                                                                    |
+|  26 May 2004  a. Updates to Make_savqmgr.com                       |
+|                                                                    |
+|  01 Oct 2004                                                       |
+|  v5.3.4                                                            |
+|               a. Handle looping error when received the message:   |
+|              "Received parameter block is of an unrecognised type."|
+|               b. Add ccsid to qmgr attributes. (should have been   |
+|                  there a long time ago )                           |
+|               c. new option: -o REPLACE | APPEND                   |
+|                  REPLACEs existing output file (overwrites)        |
+|                  APPENDs to output file (default behavior)         |
+|                  You can specify these options in any case,        |
+|                  and may abbreviate them down to one char          |
+|                  (ie, RePl, A, a, App are all valid)               |
+|                                                                    |
+|                                                                    |
+ --------------------------------------------------------------------

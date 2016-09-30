@@ -1,0 +1,98 @@
+MQCOMM  @(#) SupportPacs/ms03/Makefile.mq, supportpacs, MS03 1.1 08/12/05 12:06:00
+/**********************************************************************/
+/* <OCO_COPYRIGHT>                                                    */
+/* IBM Confidential                                                   */
+/*                                                                    */
+/* OCO Source Materials                                               */
+/*                                                                    */
+/* 5724-H72                                                           */
+/* (c) Copyright IBM Corp. 2004, 2008                                 */
+/*                                                                    */
+/* The source code for this program is not published or other-        */
+/* wise divested of its trade secrets, irrespective of what has       */
+/* been deposited with the U.S. Copyright Office.                     */
+/* <END_COPYRIGHT>                                                    */
+/**********************************************************************/
+
+/**********************************************************************/
+/* This Makefile.mq is used to build the WebSphere MQ Save Queue      */
+/* Manager Object Definitions using PCFs (ms03 supportpac)            */
+/**********************************************************************/
+
+/**********************************************************************/
+/* BASEOBJS is the list of source files to be included in each        */
+/* executable.                                                        */
+/**********************************************************************/
+BASEOBJS=Object(args)     Object(channel)  Object(mqutils)   Object(process)  \
+         Object(namelist) Object(qmgr)     Object(queue)     Object(authinfo) \
+         Object(listener) Object(services) Object(stgclass)  Object(system)   \
+         Object(usage)    Object(log)      Object(cfstruct)  Object(archive)  \
+         Object(oam)      Object(topic)    Object(subscript)
+
+/**********************************************************************/
+/* Create the list of libraries required to build the executables.    */
+/**********************************************************************/
+#if defined(ArchitectureFamilyPc)
+DEPS=
+LIBS=mqm
+DEPC=
+LIBC=mqic
+#else
+#if defined(ArchitectureSolaris2)
+BASELIBS=-lmqmcs -lmqmzse -lc -lm -lsocket
+#elif defined(ArchitectureLinux2) || defined(ArchitectureHp) || defined(ArchitectureRsAix)
+BASELIBS=-lm
+#endif
+DEPS=DevSharedLibrary(mqm,NP)
+LIBS=SharedFlag(mqm,NP) $(BASELIBS)
+DEPC=DevSharedLibrary(mqic,NP)
+LIBC=SharedFlag(mqic,NP) $(BASELIBS)
+#endif
+
+/**********************************************************************/
+/* Add any extra compile flags not added by mqmake automatically      */
+/**********************************************************************/
+#if defined(ArchitectureLinux2)
+CFLAGS.directory=-DUNIX -Wall
+#elif defined(ArchitectureHp)
+CFLAGS.directory=-DUNIX -Ae
+#elif defined(ArchitectureFamilyUnix)
+CFLAGS.directory=-DUNIX
+#endif
+
+/**********************************************************************/
+/* Create an extra copy of saveqmgr to compile with -DUSEMQCNX        */
+/**********************************************************************/
+LinkSourceFile(saveqmgr.c,saveqmgrc.c)
+CFLAGS.saveqmgrc=-DUSEMQCNX
+
+/**********************************************************************/
+/* Build all the source parts.                                        */
+/**********************************************************************/
+CompileObject(NP,saveqmgr)
+CompileBuildObject(NP,saveqmgrc)
+CompileObject(NP,args)
+CompileObject(NP,channel)
+CompileObject(NP,mqutils)
+CompileObject(NP,process)
+CompileObject(NP,namelist)
+CompileObject(NP,qmgr)
+CompileObject(NP,queue)
+CompileObject(NP,authinfo)
+CompileObject(NP,listener)
+CompileObject(NP,services)
+CompileObject(NP,stgclass)
+CompileObject(NP,system)
+CompileObject(NP,usage)
+CompileObject(NP,log)
+CompileObject(NP,cfstruct)
+CompileObject(NP,archive)
+CompileObject(NP,oam)
+CompileObject(NP,topic)
+CompileObject(NP,subscript)
+
+/**********************************************************************/
+/* Link both the server and client executables.                       */
+/**********************************************************************/
+BuildProgram(NP,saveqmgr,Object(saveqmgr) $(BASEOBJS),$(DEPS),$(LIBS))
+BuildProgram(NP,saveqmgrc,Object(saveqmgrc) $(BASEOBJS),$(DEPC),$(LIBC))

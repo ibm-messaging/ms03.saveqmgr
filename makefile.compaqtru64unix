@@ -1,0 +1,44 @@
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+# Module Name: makefile.compaqtru64unix                                                 
+# DESCRIPTIVE NAME WebSphere MQ Save Queue Manager Object                  
+#                  Definitions using PCFs (ms03 supportpac)                 
+#                                                                           
+
+
+# This Makefile makes the saveqmgr executables on compaqtru64unix (ms03)
+#
+# Set the suffix for the target files
+EXESUF = compaqtru64unix
+
+# CC defines the compiler.
+CC = cc
+
+# LC defines the linker
+LC = $(CC)
+
+# MQM library directory
+MQMLIB = /opt/mqm/lib
+
+# set LIBS to list all the libraries ms03 should link with.
+LIBS = -lm -lmqm -lmqmcs -lmqmzse 
+LIBC = -lm -lmqic -lmqmcs -lmqmzse
+
+# set INCS to list all the header the compiler needs
+INCS = -I. -I/usr/include -I/usr/include/sys -I/opt/mqm/inc 
+
+# Set CCOPTS - the compiler options.
+CCOPTS = -c -DUNIX -std1 -pthread -o $*.$(OBJSUF)
+CCOPTC = -c -DUNIX -std1 -pthread -DUSEMQCNX -o $@
+
+# Set LCOPTS - the linker options
+LCOPTS = -o $@ -L$(MQMLIB) -L. $(LIBS)
+LCOPTC = -o $@ -L$(MQMLIB) -L. $(LIBC)
+
+# Set the suffix for the object files
+OBJSUF = o
+
+# Include the file which does the real work! 
+include makefile.common
+

@@ -1,0 +1,46 @@
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+# Module Name: makefile.hp                                                  
+# DESCRIPTIVE NAME WebSphere MQ Save Queue Manager Object                  
+#                  Definitions using PCFs (ms03 supportpac)                 
+#                                                                           
+
+
+# This Makefile makes the saveqmgr executables on hp (ms03)
+#
+# Set the suffix for the target files
+EXESUF = hp
+
+# CC defines the compiler.
+CC = cc
+
+# LC defines the linker
+LC = $(CC)
+
+# MQM library directory
+MQMLIB = /opt/mqm/lib64
+
+# set LIBS to list all the libraries ms03 should link with.
+LIBS = -lm -lmqm
+LIBC = -lm -lmqic
+
+# set INCS to list all the header the compiler needs
+INCS = -I. -I/usr/include -I/usr/include/sys -I/opt/mqm/inc
+
+# Set CCOPTS - the compiler options.
+CCOPTS = +DD64 -c -Ae -DUNIX  -o $*.$(OBJSUF)
+CCOPTC = +DD64 -c -Ae -DUNIX -DUSEMQCNX -o $@
+
+# Set LCOPTS - the linker options
+LCOPTS = +DD64 -o $@ -L$(MQMLIB) -L. $(LIBS)
+LCOPTC = +DD64 -o $@ -L$(MQMLIB) -L. $(LIBC)
+
+# Set the suffix for the object files
+OBJSUF = o
+
+RM = rm
+
+# Include the file which does the real work! 
+include makefile.common
+

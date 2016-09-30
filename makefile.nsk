@@ -1,0 +1,54 @@
+# This Makefile makes the saveqmgr executable on NSK (ms03)
+
+# (C) Copyright IBM Corporation 1995, 1997, 1998, 1999, 2000, 2002, 2003    
+#                               2004, 2005, 2006, 2007, 2008, 2009
+
+
+#
+MQINCDIR = /G/system/zmqslib
+MQINC= cmqc.h cmqcfc.h cmqxc.h
+
+all: ${MQINC} mqmlibnc.o saveqmgr
+
+# set TARGET to the name of the executable to create
+TARGET = saveqmgr
+
+# CC defines the compiler. Set to "c89" for ANSI compliant C compiler.
+CC = c89
+
+# Set CCOPTS - the compiler options.
+CCOPTS = -c -DUNIX -Wextensions -Wsystype=guardian -Wnowarn=262,1506,770 -I. -I/G/system/zmqslib
+
+LFLAGS= -Whighpin=on -Whighrequesters=on -Wrunnamed -Winspect -Wsaveabend -Wsystype=guardian 
+
+OBJS = saveqmgr.o namelist.o channel.o mqutils.o process.o qmgr.o queue.o authinfo.o
+
+saveqmgr : $(OBJS)
+	$(CC) -o saveqmgr $(OBJS) mqmlibnc.o -L. $(LFLAGS)
+
+saveqmgr.o : saveqmgr.c saveqmgr.h
+channel.o : channel.c saveqmgr.h
+mqutils.o : mqutils.c saveqmgr.h
+process.o : process.c saveqmgr.h
+namelist.o : namelist.c saveqmgr.h
+qmgr.o : qmgr.c saveqmgr.h
+queue.o : queue.c saveqmgr.h
+authinfo.o : authinfo.c saveqmgr.h
+
+
+#the object files depend on the corresponding source files
+.c.o:
+	$(CC) $(CCOPTS) -I. -I/usr/include -I/usr/include/sys $<
+
+
+mqmlibnc.o: ${MQINCDIR}/mqmlibnc
+	cp $< $@
+
+cmqc.h: ${MQINCDIR}/cmqc.h
+	cp $< $@
+
+cmqcfc.h: ${MQINCDIR}/cmqcfc.h
+	cp $< $@
+
+cmqxc.h: ${MQINCDIR}/cmqxc.h
+	cp $< $@
