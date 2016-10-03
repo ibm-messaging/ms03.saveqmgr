@@ -7,7 +7,7 @@ This was originally released as SupportPac MS03 Saveqmgr.
 
 There are no binary files shipped with this. If you want to use this program, you must have a compiler for your OS installed and use make or nmake (on Windows) to build a binary.
 
-# NOTICE OF RETIRMENT
+# NOTICE OF RETIREMENT
 
 THIS CODE IS OBSOLETE AND SHOULD NOT BE USED.
 ANY IBM MQ VERSION VERSION 7.1 OR LATER SHOULD USE DMPMQCFG OR THE RELEVANT COMMAND ON iSeries or zOS. 
